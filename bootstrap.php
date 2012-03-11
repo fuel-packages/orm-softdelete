@@ -19,6 +19,14 @@ Autoloader::add_classes(array(
 	'Orm\\ManyMany'     => __DIR__.'/classes/manymany.php',
 	'Orm\\Relation'     => __DIR__.'/classes/relation.php',
 
+	// Soft Delete Classes
+	'Orm\\Softdelete\Model'		=> __DIR__.'/classes/softdelete/model.php',
+	'Orm\\Softdelete\BelongsTo'	=> __DIR__.'/classes/softdelete/belongsto.php',
+	'Orm\\Softdelete\HasMany'	=> __DIR__.'/classes/softdelete/hasmany.php',
+	'Orm\\Softdelete\HasOne'	=> __DIR__.'/classes/softdelete/hasone.php',
+	'Orm\\Softdelete\ManyMany'	=> __DIR__.'/classes/softdelete/maymany.php',
+
+
 	// Observers
 	'Orm\\Observer'             => __DIR__.'/classes/observer.php',
 	'Orm\\Observer_CreatedAt'   => __DIR__.'/classes/observer/createdat.php',
