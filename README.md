@@ -21,7 +21,28 @@ A few features of the soft delete model:
 * You can still use everything in the normal ORM as usual. No interruptions there, drop this on any code already using the ORM.
 * Completely respects `cascade_save` and `cascade_delete` on all relations if the relatied models are instances of `\Orm\Softdelete\Model`.
 
+### Quick Use Example
 
+```php
+class Model_Patient extends \Orm\Softdelete\Model{}
+
+$patient = Model_Patient::forge(
+  array(
+    'first_name' => 'John',
+    'last_name' => 'Doe',
+    'pin' => 1234567890,
+    'family_doctor' => 'Dr. Seuss'
+    'insurance_number' => 0987654321,
+  )
+);
+
+$patient->save();
+
+// The delete method has been over-ridden by the soft delete for this model
+// This effectively sets $_soft_delete_property to either a mysql or unix timestamp in the row
+$patient->delete();
+
+```
 
 ### Example Model
 
@@ -58,27 +79,5 @@ class Model_Patient extends \Orm\Softdelete\Model
     );
   
 }
-
-```
-
-### Quick Use Example
-
-```php
-// Model_Patient extends \Orm\Softdelete\Model
-$patient = Model_Patient::forge(
-  array(
-    'first_name' => 'John',
-    'last_name' => 'Doe',
-    'pin' => 1234567890,
-    'family_doctor' => 'Dr. Seuss'
-    'insurance_number' => 0987654321,
-  )
-);
-
-$patient->save();
-
-// The delete method has been over-ridden by the soft delete for this model
-// This effectively sets $_soft_delete_property to either a mysql or unix timestamp in the row
-$patient->delete();
 
 ```
