@@ -1,5 +1,5 @@
 # FuelPHP ORM Including Soft Delete
-## !! Still in development - The extension isn't finished yet !!
+## !! Still in development  as of 2012/03/12- The extension isn't finished yet !!
 
 If you work in finance, healthcare or other "critical" fields, sometimes you're expected to retain data even though the user "deletes" it. This fork supplies that ability by allowing the ORM to "softly" delete a row from the database, that is, mark a column in that row that specify's that row is now "deleted", without actually removing it. That's what this fork is all about. Check out the code below to see how to use the soft delete model and feature. Submit pull requests or issues if you find bugs!
 
@@ -21,7 +21,28 @@ A few features of the soft delete model:
 * You can still use everything in the normal ORM as usual. No interruptions there, drop this on any code already using the ORM.
 * Completely respects `cascade_save` and `cascade_delete` on all relations if the relatied models are instances of `\Orm\Softdelete\Model`.
 
+### Quick Use Example
 
+```php
+class Model_Patient extends \Orm\Softdelete\Model{}
+
+$patient = Model_Patient::forge(
+  array(
+    'first_name' => 'John',
+    'last_name' => 'Doe',
+    'pin' => 1234567890,
+    'family_doctor' => 'Dr. Seuss'
+    'insurance_number' => 0987654321,
+  )
+);
+
+$patient->save();
+
+// The delete method has been over-ridden by the soft delete for this model
+// This effectively sets $_soft_delete_property to either a mysql or unix timestamp in the row
+$patient->delete();
+
+```
 
 ### Example Model
 
@@ -58,27 +79,5 @@ class Model_Patient extends \Orm\Softdelete\Model
     );
   
 }
-
-```
-
-### Quick Use Example
-
-```php
-// Model_Patient extends \Orm\Softdelete\Model
-$patient = Model_Patient::forge(
-  array(
-    'first_name' => 'John',
-    'last_name' => 'Doe',
-    'pin' => 1234567890,
-    'family_doctor' => 'Dr. Seuss'
-    'insurance_number' => 0987654321,
-  )
-);
-
-$patient->save();
-
-// The delete method has been over-ridden by the soft delete for this model
-// This effectively sets $_soft_delete_property to either a mysql or unix timestamp in the row
-$patient->delete();
 
 ```
