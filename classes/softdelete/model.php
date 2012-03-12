@@ -16,8 +16,6 @@
 
 namespace Orm\Softdelete;
 
-\Fuel::add_package('orm');
-
 class Model extends \Orm\Model
 {
 
@@ -100,6 +98,13 @@ class Model extends \Orm\Model
 				$rel->delete($this, $this->{$rel_name}, true, is_array($cascade) ? in_array($rel_name, $cascade) : $cascade);
 			}
 			$this->unfreeze();
+
+			// Remove this object from the runtime cache
+			if (array_key_exists(get_called_class(), static::$_cached_objects)
+				and array_key_exists(static::implode_pk($this), static::$_cached_objects[get_called_class()]))
+			{
+				unset(static::$_cached_objects[get_called_class()][static::implode_pk($this)]);
+			}
 
 			// Call the observers
 			$this->observe('after_delete');
