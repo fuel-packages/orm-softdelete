@@ -80,7 +80,7 @@ class Model extends \Orm\Model
 			$this->observe('before_softdelete');
 
 			// Set the soft-deleted property to a mysql time or timestmap
-			$this->{self::$_soft_delete_property} = self::mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
+			$this->{self::$_soft_delete_property} = self::$mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
 			$this->save();
 
 			// Call delete on each related object, specifying "parent deleted" as false
