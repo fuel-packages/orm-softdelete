@@ -9,10 +9,9 @@ If you work in finance, healthcare or other "critical" fields, sometimes you're 
 * Ensure the orm package is being loaded in your `APPPATH/config/config.php` file.
 * Extend your models with `\Orm\Softdelete\Model` instead of `\Orm\Model`
 * If you want to use unix timestamps (1331063441) (Default)
-  * Add a field called `deleted_at INT DEFAULT 0` to any table in the database that you're using `Softdelete\Model` on.
+  * Add a field called `deleted_at int(11) DEFAULT NULL` to any table in the database that you're using `Softdelete\Model` on.
 * If you wish to use mysql timestamps (YYYY-MM-DD HH:MM:SS)
   * Add a field called `deleted_at TIMESTAMP DEFAULT None` to any table in the database that you're using `Softdelete\Model` on.
-
 
 
 ### Features
@@ -21,9 +20,22 @@ A few features of the soft delete model:
 * You can still use everything in the normal ORM as usual. No interruptions there, drop this on any code already using the ORM.
 * Completely respects `cascade_save` and `cascade_delete` on all relations if the relatied models are instances of `\Orm\Softdelete\Model`.
 
+
+```php
+
+<?php
+
+$model->save(); // works exactly the same
+$model->delete(); // uses deleted_at field to maintain row persistence in the database
+$model->restore(); // sets deleted_at to NULL to show that the row is not deleted
+```
+
+
 ### Quick Use Example
 
 ```php
+
+<?php
 class Model_Patient extends \Orm\Softdelete\Model{}
 
 $patient = Model_Patient::forge(
@@ -36,11 +48,16 @@ $patient = Model_Patient::forge(
   )
 );
 
+// save the patient to the database
 $patient->save();
 
 // The delete method has been over-ridden by the soft delete for this model
 // This effectively sets $_soft_delete_property to either a mysql or unix timestamp in the row
 $patient->delete();
+
+// Restore the patient from being soft-deleted
+$patient->restore();
+
 
 ```
 
