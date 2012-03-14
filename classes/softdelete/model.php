@@ -29,6 +29,8 @@ class Model extends \Orm\Model
 	public static $_soft_delete_property = 'deleted_at';
 	public static $mysql_timestamp = false;
 
+	protected $_override_delete = false;
+
 	/**
 	 * Check to see if this object is soft-deleted
 	 * return bool
@@ -36,6 +38,11 @@ class Model extends \Orm\Model
 	public function is_soft_deleted(){
 		// @TODO check for mysql vs timestamp
 		return (bool)$this->{self::$_soft_delete_property} !== 0;
+	}
+
+	public function override_delete( $delete = true ){
+		$this->_override_delete = $delete;
+		return $this;
 	}
 
 	public static function find($id = null, array $options = array() )
@@ -64,6 +71,12 @@ class Model extends \Orm\Model
 		if( $this->frozen() or $this->is_new() )
 		{
 			return $this;
+		}
+		\Debug::dump($this->_override_delete);
+		if( $this->_override_delete === true )
+		{
+			parent::delete($cascade, $use_transaction);
+			return;
 		}
 
 		// @TODO Not sure if this is the right way to do a transaction, check ORM package
