@@ -28,6 +28,7 @@ A few features of the soft delete model:
 $model->save(); // works exactly the same
 $model->delete(); // uses deleted_at field to maintain row persistence in the database
 $model->restore(); // sets deleted_at to NULL to show that the row is not deleted
+$model->override_delete()->delete(); // calls the original ORM delete, this will nuke the row from the database
 ```
 
 
