@@ -27,7 +27,7 @@ class Model extends \Orm\Model
 	);
 
 	public static $_soft_delete_property = 'deleted_at';
-	public static $mysql_timestamp = false;
+	public static $_mysql_timestamp = false;
 
 	protected $_override_delete = false;
 
@@ -101,7 +101,7 @@ class Model extends \Orm\Model
 			$this->unfreeze();
 
 			// Set the soft-deleted property to a mysql time or timestmap
-			$this->{self::$_soft_delete_property} = self::$mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
+			$this->{self::$_soft_delete_property} = self::$_mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
 			$this->save();
 
 			$this->freeze();
