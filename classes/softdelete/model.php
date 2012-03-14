@@ -49,7 +49,7 @@ class Model extends \Orm\Model
 		else
 		{
 			$options = array();
-			$options['where'] = array( array( static::$_soft_delete_property, 0 ) );
+			$options['where'] = array( array( static::$_soft_delete_property, NULL ) );
 			return parent::find( $id, $options );
 		}		
 	}
@@ -147,7 +147,7 @@ class Model extends \Orm\Model
 			{
 				$this->observe('before_restore');
 				// @TODO this might need to be null
-				$this->{self::$_soft_delete_property} = 0;
+				$this->{self::$_soft_delete_property} = NULL;
 				$this->save();
 			}
 
