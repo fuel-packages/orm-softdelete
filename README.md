@@ -1,5 +1,4 @@
 # FuelPHP ORM Including Soft Delete
-## !! Still in development  as of 2012/03/12- The extension isn't finished yet !!
 
 If you work in finance, healthcare or other "critical" fields, sometimes you're expected to retain data even though the user "deletes" it. This fork supplies that ability by allowing the ORM to "softly" delete a row from the database, that is, mark a column in that row that specify's that row is now "deleted", without actually removing it. That's what this fork is all about. Check out the code below to see how to use the soft delete model and feature. Submit pull requests or issues if you find bugs!
 
@@ -28,6 +27,7 @@ A few features of the soft delete model:
 $model->save(); // works exactly the same
 $model->delete(); // uses deleted_at field to maintain row persistence in the database
 $model->restore(); // sets deleted_at to NULL to show that the row is not deleted
+$model->override_delete()->delete(); // calls the original ORM delete, this will nuke the row from the database
 ```
 
 
