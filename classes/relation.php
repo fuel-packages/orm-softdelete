@@ -60,6 +60,11 @@ abstract class Relation
 	protected $cascade_delete = false;
 
 	/**
+	 * @var bool 	Whether restoring the model_from should cascade to model_to
+	 */
+	protected $cascade_restore = true;
+
+	/**
 	 * Configures the relationship
 	 *
 	 * @param  string  the model that initiates the relationship
