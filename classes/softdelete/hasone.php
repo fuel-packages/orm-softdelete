@@ -18,7 +18,7 @@ namespace Orm\Softdelete;
 
 class HasOne extends \Orm\HasOne
 {
-	public function delete($model_from, $models_to, $parent_deleted, $cascade)
+	public function delete($model_from, $model_to, $parent_deleted, $cascade)
 	{
 		if( ! $parent_deleted)
 		{
@@ -27,12 +27,25 @@ class HasOne extends \Orm\HasOne
 
 		// Do a cascading delete on the related models
 		$cascade = is_null($cascade) ? $this->cascade_delete : (bool) $cascade;
-		if ($cascade and ! empty($models_to))
+		if ($cascade and ! empty($model_to))
 		{
-			foreach ($models_to as $m)
-			{
-				$m->delete();
-			}
+			$model_to->delete();
 		}
 	}
+
+	public function restore($model_from, $model_to, $parent_restored, $cascade)
+	{
+		if( ! $parent_restored )
+		{
+			return;
+		}
+
+		// Do a cascading restore on related models
+		$cascade = is_null($cascade) ? $this->cascade_restore : (bool) $cascade;
+		if ($cascade and ! empty($model_to))
+		{
+			$model_to->restore();
+		}
+	}
+	
 }

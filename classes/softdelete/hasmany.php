@@ -35,4 +35,24 @@ class HasMany extends \Orm\HasMany
 			}
 		}
 	}
+
+	public function restore($model_from, $models_to, $parent_restored, $cascade)
+	{
+		if( ! $parent_restored )
+		{
+			return;
+		}
+		
+		// Do a cascading restore on related models
+		$cascade = is_null($cascade) ? $this->cascade_restore : (bool) $cascade;
+		if ($cascade and ! empty($models_to))
+		{
+			foreach ($models_to as $m)
+			{
+				$m->restore();
+			}
+		}
+
+	}
+	
 }

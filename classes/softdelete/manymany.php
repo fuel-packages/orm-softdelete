@@ -25,18 +25,9 @@ class ManyMany extends \Orm\ManyMany
 			return;
 		}
 
-		// Delete all relationship entries for the model_from
-		$query = \DB::delete($this->table_through);
-		reset($this->key_from);
-		foreach ($this->key_through_from as $key)
-		{
-			$query->where($key, '=', $model_from->{current($this->key_from)});
-			next($this->key_from);
-		}
-		$query->execute(call_user_func(array($model_from, 'connection')));
-
+		// Do a cascading delete on the related models
 		$cascade = is_null($cascade) ? $this->cascade_delete : (bool) $cascade;
-		if ($cascade and ! empty($model_to))
+		if ($cascade and ! empty($models_to))
 		{
 			foreach ($models_to as $m)
 			{
@@ -44,4 +35,24 @@ class ManyMany extends \Orm\ManyMany
 			}
 		}
 	}
+
+	public function restore($model_from, $models_to, $parent_restored, $cascade)
+	{
+		if( ! $parent_restored )
+		{
+			return;
+		}
+
+		// Do a cascading restore on the related models
+		$cascade = is_null($cascade) ? $this->cascade_restore : (bool) $cascade;
+		if ($cascade and ! empty($models_to))
+		{
+			foreach ($models_to as $m)
+			{
+				$m->restore();
+			}
+		}
+
+	}
+	
 }

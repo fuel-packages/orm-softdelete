@@ -17,6 +17,17 @@ namespace Orm\Softdelete;
 
 class BelongsTo extends \Orm\BelongsTo
 {
+
+	public function __construct($from, $name, array $config)
+	{
+		// Set a static variable to cascade restores
+
+		$this->cascade_restore = array_key_exists('cascade_restore', $config) ? $config['cascade_restore'] : $this->cascade_restore;
+
+		parent::__construct($from, $name, $config);
+	}
+
+
 	public function delete($model_from, $model_to, $parent_deleted, $cascade)
 	{
 		if ($parent_deleted)
@@ -31,4 +42,21 @@ class BelongsTo extends \Orm\BelongsTo
 			$model_to->delete();
 		}
 	}
+	
+	// Do a cascading restore on related models
+	public function restore($model_from, $model_to, $parent_restored, $cascade)
+	{
+		if( $parent_restored )
+		{
+			return;
+		}
+
+		$cascade = is_null($cascade) ? $this->cascade_restore : (bool) $cascade;
+		if ($cascade and ! empty($model_to))
+		{
+			$model_to->restore();
+		}
+
+	}
+
 }

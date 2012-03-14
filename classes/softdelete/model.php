@@ -79,10 +79,6 @@ class Model extends \Orm\Model
 			$this->observe('before_delete');
 			$this->observe('before_softdelete');
 
-			// Set the soft-deleted property to a mysql time or timestmap
-			$this->{self::$_soft_delete_property} = self::$mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
-			$this->save();
-
 			// Call delete on each related object, specifying "parent deleted" as false
 			$this->freeze();
 			foreach($this->relations() as $rel_name => $rel)
@@ -90,6 +86,10 @@ class Model extends \Orm\Model
 				$rel->delete($this, $this->{$rel_name}, false, is_array($cascade) ? in_array($rel_name, $cascade) : $cascade);
 			}
 			$this->unfreeze();
+
+			// Set the soft-deleted property to a mysql time or timestmap
+			$this->{self::$_soft_delete_property} = self::$mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
+			$this->save();
 
 			$this->freeze();
 			// Call delete on each related object, specifying "parent deleted" as true
@@ -126,7 +126,7 @@ class Model extends \Orm\Model
 	 * Restore this object from being deleted
 	 * return \Softdelete\Model
 	 */
-	public function restore()
+	public function restore($cascade = null, $use_transaction = false)
 	{
 		// If the object is frozen, return
 		if( $this->frozen() )
@@ -134,14 +134,38 @@ class Model extends \Orm\Model
 			return $this;
 		}
 
-		if( $this->is_soft_deleted() )
+		try
 		{
-			$this->observe('before_restore');
-			// @TODO this might need to be null
-			$this->{self::$_soft_delete_property} = 0;
-			$this->save();
+			$this->freeze();
+			foreach($this->relations() as $rel_name => $rel)
+			{
+				$rel->restore($this, $this->{$rel_name}, false, is_array($cascade) ? in_array($rel_name, $cascade) : $cascade);
+			}
+			$this->unfreeze();
+
+			if( $this->is_soft_deleted() )
+			{
+				$this->observe('before_restore');
+				// @TODO this might need to be null
+				$this->{self::$_soft_delete_property} = 0;
+				$this->save();
+			}
+
+			$this->freeze();
+			foreach($this->relations() as $rel_name => $rel)
+			{
+				$rel->restore($this, $this->{$rel_name}, true, is_array($cascade) ? in_array($rel_name, $cascade) : $cascade);
+			}
+			$this->unfreeze();
+
+			$this->observe('after_restore');
 		}
-		// Restore the object
+		catch( \Exception $e )
+		{
+
+			throw $e;
+		}
+
 		return $this;
 	}
 
@@ -151,8 +175,7 @@ class Model extends \Orm\Model
 	 */
 	public function undelete()
 	{
-		$this->restore();
-		return $this;
+		return $this->restore();
 	}
 
 }
