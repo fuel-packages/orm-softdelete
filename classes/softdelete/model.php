@@ -72,7 +72,7 @@ class Model extends \Orm\Model
 		{
 			return $this;
 		}
-		\Debug::dump($this->_override_delete);
+
 		if( $this->_override_delete === true )
 		{
 			parent::delete($cascade, $use_transaction);
