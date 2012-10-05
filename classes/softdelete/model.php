@@ -26,8 +26,8 @@ class Model extends \Orm\Model
 		'many_many'     => 'Orm\Softdelete\ManyMany',
 	);
 
-	public static $_soft_delete_property = 'deleted_at';
-	public static $_mysql_timestamp = false;
+	protected static $_soft_delete_property = 'deleted_at';
+	protected static $_mysql_timestamp = false;
 
 	protected $_override_delete = false;
 
@@ -37,7 +37,7 @@ class Model extends \Orm\Model
 	 */
 	public function is_soft_deleted(){
 		// @TODO check for mysql vs timestamp
-		return (bool)$this->{self::$_soft_delete_property} !== 0;
+		return (bool) $this->{static::$_soft_delete_property} !== 0;
 	}
 
 	public function override_delete( $delete = true ){
@@ -101,7 +101,7 @@ class Model extends \Orm\Model
 			$this->unfreeze();
 
 			// Set the soft-deleted property to a mysql time or timestmap
-			$this->{self::$_soft_delete_property} = self::$_mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
+			$this->{static::$_soft_delete_property} = static::$_mysql_timestamp ? \Date::forge()->format('mysql') : \Date::forge()->get_timestamp();
 			$this->save();
 
 			$this->freeze();
@@ -160,7 +160,7 @@ class Model extends \Orm\Model
 			{
 				$this->observe('before_restore');
 				// @TODO this might need to be null
-				$this->{self::$_soft_delete_property} = NULL;
+				$this->{static::$_soft_delete_property} = NULL;
 				$this->save();
 			}
 
