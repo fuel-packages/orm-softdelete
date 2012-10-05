@@ -93,6 +93,7 @@ class Model_Patient extends \Orm\Softdelete\Model
       'pin',
       'family_doctor',
       'insurance_number',
+      'deleted_at',
     );
   
 }
